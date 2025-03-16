@@ -2,6 +2,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.io.File;
@@ -11,7 +13,7 @@ import javax.sound.sampled.Clip;
 public class LootBoxSimulator {
     private static final String[] LOOT_ITEMS = {"Common Item", "Uncommon Item", "Rare Item", "Epic Item", "Legendary Item"};
     private static final Color[] ITEM_COLORS = {Color.gray, Color.green, Color.blue, Color.magenta, Color.orange};
-    
+    private static List<String> inventory = new ArrayList<>(); 
     public static void main(String[] args) {
         JFrame frame = new JFrame("Loot Box Simulator");
         frame.setSize(400, 200);
@@ -28,34 +30,70 @@ public class LootBoxSimulator {
         //button to open
         JButton openButton = new JButton("Open Loot Box");
         frame.add(openButton);
-        
+
         //label to show loot box count
         AtomicInteger lootBoxCount = new AtomicInteger(LootBoxTracker.loadLootBoxCount().get());
+        inventory = LootBoxTracker.loadInventory();
         JLabel countLabel = new JLabel("Loot Boxes Opened: " + lootBoxCount.get());
         countLabel.setFont(new Font("Arial", Font.BOLD, 14));
         frame.add(countLabel);
 
+        //button to view inventory
+        JButton inventoryButton = new JButton("View Inventory");
+        frame.add(inventoryButton);
 
-        //Listener for button
+        //listener for open button
         openButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                //weights on items to simualte rarity
+                //weights on items to simulate rarity
                 int index = getRandomIndex(new int[]{50, 30, 15, 4, 1});
                 resultLabel.setText("You got: " + LOOT_ITEMS[index]);
                 resultLabel.setForeground(ITEM_COLORS[index]);
 
+                //update count and save
                 lootBoxCount.incrementAndGet();
                 LootBoxTracker.saveLootBoxCount(lootBoxCount.get());
 
                 countLabel.setText("Loot Boxes Opened: " + lootBoxCount.get());
+
+                //add to inventory
+                String obtainedItem = LOOT_ITEMS[index];
+                inventory.add(obtainedItem);
+                LootBoxTracker.saveInventory(inventory);
 
                 //sound effect
                 playSound("../resources/lootbox_open.wav");
             }
         });
 
+        //listener for inventory button
+        inventoryButton.addActionListener(_ -> showInventoryWindow());
+
         frame.setVisible(true);
+    }
+
+    private static void showInventoryWindow() {
+        JFrame inventoryFrame = new JFrame("Inventory");
+        inventoryFrame.setSize(300, 400);
+        inventoryFrame.setLocationRelativeTo(null);
+        inventoryFrame.setLayout(new BorderLayout());
+
+        JTextArea inventoryText = new JTextArea();
+        inventoryText.setEditable(false);
+
+        if (inventory.isEmpty()) {
+            inventoryText.setText("Inventory is empty.");
+        } else {
+            StringBuilder sb = new StringBuilder("Items Collected:\n");
+            for (String item : inventory) {
+                sb.append("- ").append(item).append("\n");
+            }
+            inventoryText.setText(sb.toString());
+        }
+
+        inventoryFrame.add(new JScrollPane(inventoryText), BorderLayout.CENTER);
+        inventoryFrame.setVisible(true);
     }
 
     private static int getRandomIndex(int[] weights) {
