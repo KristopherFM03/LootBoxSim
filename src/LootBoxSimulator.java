@@ -3,6 +3,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Random;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.io.File;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
@@ -27,6 +28,13 @@ public class LootBoxSimulator {
         //button to open
         JButton openButton = new JButton("Open Loot Box");
         frame.add(openButton);
+        
+        //label to show loot box count
+        AtomicInteger lootBoxCount = new AtomicInteger(LootBoxTracker.loadLootBoxCount().get());
+        JLabel countLabel = new JLabel("Loot Boxes Opened: " + lootBoxCount.get());
+        countLabel.setFont(new Font("Arial", Font.BOLD, 14));
+        frame.add(countLabel);
+
 
         //Listener for button
         openButton.addActionListener(new ActionListener() {
@@ -36,6 +44,12 @@ public class LootBoxSimulator {
                 int index = getRandomIndex(new int[]{50, 30, 15, 4, 1});
                 resultLabel.setText("You got: " + LOOT_ITEMS[index]);
                 resultLabel.setForeground(ITEM_COLORS[index]);
+
+                lootBoxCount.incrementAndGet();
+                LootBoxTracker.saveLootBoxCount(lootBoxCount.get());
+
+                countLabel.setText("Loot Boxes Opened: " + lootBoxCount.get());
+
                 //sound effect
                 playSound("../resources/lootbox_open.wav");
             }
