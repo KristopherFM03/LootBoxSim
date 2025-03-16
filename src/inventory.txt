@@ -48,3 +48,4 @@ Common Item
 Rare Item
 Common Item
 Common Item
+Uncommon Item
