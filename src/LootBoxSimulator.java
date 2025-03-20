@@ -11,7 +11,7 @@ import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
 
 public class LootBoxSimulator {
-    private static final String[] LOOT_ITEMS = {"Common Item", "Uncommon Item", "Rare Item", "Epic Item", "Legendary Item"};
+    private static final String[] LOOT_RARITY = {"Common", "Uncommon", "Rare", "Epic", "Legendary"};
     private static final Color[] ITEM_COLORS = {Color.gray, Color.green, Color.blue, Color.magenta, Color.orange};
     private static List<String> inventory = new ArrayList<>(); 
     public static void main(String[] args) {
@@ -48,19 +48,21 @@ public class LootBoxSimulator {
             public void actionPerformed(ActionEvent e) {
                 //weights on items to simulate rarity
                 int index = getRandomIndex(new int[]{50, 30, 15, 4, 1});
-                resultLabel.setText("You got: " + LOOT_ITEMS[index]);
+                //get the rarity from the rolled index
+                String rarity = LOOT_RARITY[index];
+                //generate an item with the rolled rarity
+                String item = ItemGenerator.generateItem(rarity);
+
+                resultLabel.setText("You got: " + item);
                 resultLabel.setForeground(ITEM_COLORS[index]);
+                //add to inventory
+                inventory.add(item);
+                LootBoxTracker.saveInventory(inventory);
 
                 //update count and save
                 lootBoxCount.incrementAndGet();
                 LootBoxTracker.saveLootBoxCount(lootBoxCount.get());
-
                 countLabel.setText("Loot Boxes Opened: " + lootBoxCount.get());
-
-                //add to inventory
-                String obtainedItem = LOOT_ITEMS[index];
-                inventory.add(obtainedItem);
-                LootBoxTracker.saveInventory(inventory);
 
                 //sound effect
                 playSound("../resources/lootbox_open.wav");

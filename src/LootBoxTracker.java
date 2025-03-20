@@ -3,8 +3,8 @@ import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class LootBoxTracker {
-    private static final String FILE_NAME = "lootbox_count.txt";
-    private static final String INVENTORY_FILE = "inventory.txt";
+    private static final String FILE_NAME = "../resources/lootbox_count.txt";
+    private static final String INVENTORY_FILE = "../resources/inventory.txt";
 
     public static AtomicInteger loadLootBoxCount() {
         try (BufferedReader reader = new BufferedReader(new FileReader(FILE_NAME))) {
