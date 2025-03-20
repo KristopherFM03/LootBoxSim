@@ -3,6 +3,7 @@ A small app that simulates the thrill and excitement of opening loot boxes using
 
 ## Features
 - A tracker utilzing AtomicInteger!
+- Item Generation!
 
 ## Credits
 
