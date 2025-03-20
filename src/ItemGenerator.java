@@ -1,17 +1,39 @@
-import java.util.Random;
+import java.io.*;
+import java.util.*;
 
 public class ItemGenerator {
-    private static final String[] ITEM_TYPES = {"Sword", "Shield", "Helmet", "Gauntlets", "Bow", "Staff"};
-    //could be transformed into an API call to get random adjectives...
-    private static final String[] ADJECTIVES = {"Radiance", "Darkness", "Ice", "Domination", "Shadow", "Dread"};
     private static final Random random = new Random();
+    private static final String[] ITEM_TYPES = {"Sword", "Shield", "Helmet", "Gauntlets", "Bow", "Staff"};
+    //could be transformed into an API call to get random nouns...
+    private static final String[] NOUNS = {"Radiance", "Darkness", "Ice", "Domination", "Shadow", "Dread"};
+    //map to store rarity and corresponding adjectives
+    private static final Map<String, List<String>> RARITY_ADJECTIVES = new HashMap<>();
+    //load CSV data into the map
+    static {
+        String csvFile = "../resources/rarity_adjectives.csv";
+        try (BufferedReader br = new BufferedReader(new FileReader(csvFile))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                String[] parts = line.split(",");
+                String rarity = parts[0];
+                List<String> adjectives = new ArrayList<>(Arrays.asList(parts).subList(1, parts.length));
+                RARITY_ADJECTIVES.put(rarity, adjectives);
+            }
+        } catch (IOException e) {
+            System.out.println("Error reading CSV file: " + e.getMessage());
+        }
+    }
 
-    //could be transformed to have the rarity corresponding to multiple adjectives
-    //common could be: mundance, basic, poor, etc.
+
     public static String generateItem(String rarity) {
         String itemType = ITEM_TYPES[random.nextInt(ITEM_TYPES.length)];
-        String adjective = ADJECTIVES[random.nextInt(ADJECTIVES.length)];
-        return rarity + " " + itemType + " of " + adjective;
+        String rarityAdjective = RARITY_ADJECTIVES.get(rarity).get(random.nextInt(RARITY_ADJECTIVES.get(rarity).size()));
+        //rarity is not found in the map, use a default adjective
+        if (rarityAdjective == null) {
+            rarityAdjective = "Unknown";
+        }
+        String noun = NOUNS[random.nextInt(NOUNS.length)];
+        return rarityAdjective + " " + itemType + " of " + noun;
     }
 
     //for debugging purposes
