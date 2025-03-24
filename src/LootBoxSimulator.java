@@ -18,15 +18,16 @@ public class LootBoxSimulator {
         //center the window
         frame.setLocationRelativeTo(null);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setLayout(new FlowLayout());
-
+        frame.setLayout(new BoxLayout(frame.getContentPane(), BoxLayout.Y_AXIS));
         //result of loot box
         JLabel resultLabel = new JLabel("Click 'Open Loot Box' to get an item!");
         resultLabel.setFont(new Font("Arial", Font.BOLD, 14));
+        resultLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
         frame.add(resultLabel);
 
         //button to open
         JButton openButton = new JButton("Open Loot Box");
+        openButton.setAlignmentX(Component.CENTER_ALIGNMENT);
         frame.add(openButton);
 
         //label to show loot box count
@@ -34,10 +35,12 @@ public class LootBoxSimulator {
         inventory = LootBoxTracker.loadInventory();
         JLabel countLabel = new JLabel("Loot Boxes Opened: " + lootBoxCount.get());
         countLabel.setFont(new Font("Arial", Font.BOLD, 14));
+        countLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
         frame.add(countLabel);
 
         //button to view inventory
         JButton inventoryButton = new JButton("View Inventory");
+        inventoryButton.setAlignmentX(Component.CENTER_ALIGNMENT);
         frame.add(inventoryButton);
 
         //listener for open button
